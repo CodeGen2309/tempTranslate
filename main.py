@@ -1,33 +1,40 @@
-import json
+import mocks
 
 from deep_translator import GoogleTranslator
-from iso639 import iter_langs
 from time import sleep
 
 
-def getLocales ():
-  with open('langlist.json', 'r') as file:
-    raw = file.read()
-    locales = json.loads(raw)
 
-  return locales
-
-
-
-def translate_text( locale = 'en' ):
-  result = GoogleTranslator(source='ru', target=locale).translate('Всем привет!')
-  print(result)
+def translateText(text='Всем привет!', locale = 'en' ):
+  result = GoogleTranslator(source='ru', target=locale).translate(text)
   return result
 
 
+def makeUpMessage (header='', title='', poster='', desc=''):
+  reqObject = f" 'title' : {title}, 'poster' : {poster}, 'desc' : {desc} "
+  return header + ' {' + reqObject + '}'
 
-def main ():
-  locales = getLocales()
 
-  for lc in locales:
-    print(lc)
-    hola = translate_text(locale=lc)
-    print(hola)
-  
+locales = mocks.locales
+# locales = [ 'it' ]
+decider = '--------------------------------------'
 
-main()
+for lc in locales:
+  print(lc)
+  print(decider)
+
+  title  = translateText(mocks.titleString, lc)
+  poster = translateText(mocks.posterString, lc)
+  desc   = translateText(mocks.descString, lc)
+
+  welcomeHeader  = translateText(mocks.welcomeString, lc)
+  welcomeMessage = makeUpMessage(welcomeHeader, title, poster, desc)
+  print(welcomeMessage + '\n\n')
+
+  anotherHeader  = translateText(mocks.anotherFilmString, lc)
+  anotherMessage = makeUpMessage(anotherHeader, title, poster, desc)
+  print(anotherMessage + '\n\n')
+
+  getTralier     = translateText(text=mocks.getTrailerString, locale=lc)
+  print(getTralier)
+  print(decider + '\n\n')
